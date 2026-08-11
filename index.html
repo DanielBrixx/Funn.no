@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>funn.no</title>
+<link rel="manifest" href="/manifest.json" />
+<link rel="apple-touch-icon" href="/icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="theme-color" content="#14181A" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+  :root{
+    --paper:#F1E8D2;
+    --paper-card:#FBF6EA;
+    --ink:#241F16;
+    --stamp:#A6332A;
+    --forest:#2E4F3B;
+    --mustard:#D6A233;
+    --line:#C9B98E;
+    --bg:#14181A;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    min-height:100vh; display:flex; justify-content:center;
+    padding:24px 16px 60px;
+  }
+  .app{ width:100%; max-width:440px; }
+  header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+  .logo{
+    font-family:'Archivo Black', sans-serif; color:var(--paper);
+    font-size:26px; letter-spacing:-0.5px; transform:rotate(-2deg);
+    display:inline-block;
+  }
+  .logo span{ color:var(--stamp); }
+  .status-pill{
+    font-family:'Space Mono', monospace; font-size:11px;
+    background:var(--paper-card); color:var(--ink);
+    padding:6px 10px; border-radius:20px; border:1px solid var(--line);
+  }
+  .status-pill.on{ background:var(--forest); color:var(--paper); border-color:var(--forest); }
+
+  .card{
+    background:var(--paper); border-radius:18px; padding:20px;
+    margin-bottom:16px; border:1px solid #00000022;
+  }
+  h2{ font-family:'Archivo Black', sans-serif; font-size:15px; margin:0 0 12px; text-transform:uppercase; letter-spacing:0.5px; }
+  p.hint{ font-size:13px; color:#5a5343; margin:0 0 14px; line-height:1.5; }
+
+  label{ display:block; font-size:12px; font-weight:600; margin:10px 0 4px; }
+  input[type=text], input[type=number]{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line);
+    background:var(--paper-card); font-family:'Work Sans',sans-serif; font-size:14px; color:var(--ink);
+  }
+  .row{ display:flex; align-items:center; gap:8px; margin:12px 0 4px; }
+  button{
+    font-family:'Work Sans',sans-serif; font-weight:700; font-size:14px;
+    border:none; border-radius:10px; padding:12px 16px; cursor:pointer;
+    width:100%; margin-top:14px;
+  }
+  .btn-primary{ background:var(--stamp); color:var(--paper); }
+  .btn-secondary{ background:var(--forest); color:var(--paper); }
+  .btn-ghost{ background:transparent; color:var(--stamp); border:1px solid var(--stamp); }
+
+  .search-item{
+    background:var(--paper-card); border-radius:12px; padding:12px 14px;
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:8px; border:1px solid var(--line);
+  }
+  .search-item .meta{ font-family:'Space Mono', monospace; font-size:11px; color:#5a5343; margin-top:2px; }
+  .search-item button{ width:auto; background:transparent; color:var(--stamp); font-size:18px; padding:4px 8px; margin:0; }
+  .empty{ font-size:13px; color:#5a5343; text-align:center; padding:14px 0; }
+
+  .steps{ font-size:13px; line-height:1.7; padding-left:18px; margin:0; }
+  .steps li{ margin-bottom:4px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">funn<span>.no</span></div>
+    <div id="statusPill" class="status-pill">varsler av</div>
+  </header>
+
+  <div class="card">
+    <h2>Skru på varsler</h2>
+    <p class="hint">
+      Fungerer kun etter at du har lagt funn.no til på hjemskjermen (Del-knappen
+      nederst i Safari → "Legg til på Hjem-skjerm"). Krever iOS 16.4 eller nyere.
+    </p>
+    <button class="btn-primary" id="enableBtn">Skru på varsler på denne enheten</button>
+    <button class="btn-ghost" id="testBtn">Send meg et testvarsel</button>
+  </div>
+
+  <div class="card">
+    <h2>Dine søk</h2>
+    <p class="hint">Gå på finn.no, søk og filtrer som du vil, og lim inn adressen (URL-en) her.</p>
+    <div id="searchList"></div>
+
+    <form id="searchForm">
+      <label>Navn på søket</label>
+      <input type="text" id="navn" placeholder="f.eks. Pokemon-kort" required />
+
+      <label>FINN-søk (URL)</label>
+      <input type="text" id="url" placeholder="https://www.finn.no/bap/forsale/search.html?q=..." required />
+
+      <label>Maks reell pris (kr)</label>
+      <input type="number" id="maksPris" placeholder="500" required />
+
+      <div class="row">
+        <input type="checkbox" id="verifisert" style="width:auto" />
+        <label style="margin:0">Kun verifiserte selgere</label>
+      </div>
+
+      <button type="submit" class="btn-secondary">Legg til søk</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Slik legger du til appen</h2>
+    <ol class="steps">
+      <li>Åpne denne siden i Safari på iPhonen</li>
+      <li>Trykk på Del-ikonet nederst</li>
+      <li>Velg "Legg til på Hjem-skjerm"</li>
+      <li>Åpne funn.no fra hjemskjermen og trykk "Skru på varsler"</li>
+    </ol>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>
